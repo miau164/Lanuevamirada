@@ -1,0 +1,33 @@
+<div id="image-container">
+        <input type="file" accept="image/*" id="image-input">
+        <button id="capture-button">Take a Picture</button>
+        <br>
+        <img id="captured-image" alt="Captured Image">
+    </div>
+    <script>
+        const imageInput = document.getElementById("image-input");
+        const captureButton = document.getElementById("capture-button");
+        const capturedImage = document.getElementById("captured-image");
+
+        imageInput.addEventListener("change", (e) => {
+            const selectedFile = e.target.files[0];
+            if (selectedFile) {
+                const imageURL = URL.createObjectURL(selectedFile);
+                capturedImage.src = imageURL;
+            }
+        });
+
+        captureButton.addEventListener("click", async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const mediaStreamTrack = stream.getVideoTracks()[0];
+                const imageCapture = new ImageCapture(mediaStreamTrack);
+                const blob = await imageCapture.takePhoto();
+                const imageURL = URL.createObjectURL(blob);
+                capturedImage.src = imageURL;
+                stream.getVideoTracks()[0].stop();
+            } catch (error) {
+                console.error("Error accessing the camera: ", error);
+            }
+        });
+    </script>

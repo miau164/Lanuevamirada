@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link  type="text/css" rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+</head>
+<body>
+    <!-- Contenido de tu página -->
+    <div id="capturable-content">
+        <!-- Contenido que deseas capturar -->
+        <img id="captured-image"  alt="Captured Image">
+        <h1 id="rojo">YO VOTO</h1>
+        <h2>MARIA CAMILA</h2>
+        <h3>ALCALDIA 2024 -2027</h3>
+    </div>
+
+    <div class="button">
+        <label class="boton-personalizado" for="image-input">Seleccionar Imagen</label>
+        <input type="file" accept="image/*" id="image-input" style="display: none;">
+        <button  id="capture-button" >Tomar Foto</button>
+        <button id="bthshare" onclick="shareOnFacebook()">Compartir en Facebook</button>
+        <button  id="wsp" style="font-size:24px">¡Unete al Grupo de WhatsApp! <i class="fa fa-whatsapp"></i></button>
+    </div>
+
+    <script>
+        const captureButton = document.getElementById("capture-button");
+        const imageInput = document.getElementById("image-input");
+        const capturedImage = document.getElementById("captured-image");
+        const canvas = document.createElement("canvas");
+        const $bthshare = document.querySelector('#bthshare');
+        const botonwsp = document.getElementById("wsp");
+
+        wsp.addEventListener("click", function(){
+            const url ="https://chat.whatsapp.com/F3UQxS9hi5q6jbp3E7Sdfr";
+            window.open(url, "_blank");
+        });
+
+        imageInput.addEventListener("change", (e) => {
+            const selectedFile = e.target.files[0];
+            if (selectedFile) {
+                const imageURL = URL.createObjectURL(selectedFile);
+                capturedImage.src = imageURL;
+            }
+        });
+
+        captureButton.addEventListener("click", async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const mediaStreamTrack = stream.getVideoTracks()[0];
+                const imageCapture = new ImageCapture(mediaStreamTrack);
+                const blob = await imageCapture.takePhoto();
+                const imageURL = URL.createObjectURL(blob);
+                capturedImage.src = imageURL;
+                stream.getVideoTracks()[0].stop();
+            } catch (error) {
+                console.error("Error accessing the camera: ", error);
+            }
+            capturedImage.style.display = 'inline-block';
+        });
+
+        $bthshare.addEventListener('click', function() {
+            const imageURL = capturedImage.src;
+            const facebookShareURL = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(imageURL);
+            window.open(facebookShareURL, '_blank');
+        });
+
+        function shareOnFacebook() {
+            const imageURL = capturedImage.src;
+            const siteURL = window.location.href;
+            const facebookShareURL = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(siteURL);
+            window.open(facebookShareURL, '_blank');
+          }
+    </script>
+</body>
+</html>
